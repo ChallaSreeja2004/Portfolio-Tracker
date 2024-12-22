@@ -31,6 +31,11 @@ const errorMessages = {
     message: 'Unauthorized: Invalid credentials.',
     errors: ['Invalid credentials.']
   },
+  NO_STOCKS_FOUND: {
+    statusCode: 404,
+    message: 'No stocks found for the user',
+    errors: ['The user has no stock holdings in their portfolio.']
+  },
   STOCK_NOT_FOUND: {
     statusCode: 404,
     message: 'Stock not found or does not belong to the user',

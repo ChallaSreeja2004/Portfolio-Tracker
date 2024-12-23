@@ -2,7 +2,7 @@ const jwt = require('jsonwebtoken');
 const fs = require('fs');
 const path = require('path');
 const privateKey = fs.readFileSync(
-  path.join(__dirname, '../../priavte_key.pem'),
+  path.join(__dirname, '../../private_key.pem'),
   'utf8'
 );
 const signInOptions = {

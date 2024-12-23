@@ -4,3 +4,4 @@ const portfolio = require('../controllers/portfolioControllers');
 router.get('/getPortfolioValue', portfolio.getPortfolioValue);
 router.get('/getTopPerformingStock', portfolio.getTopPerformingStock);
 router.get('/getPortfolioDistribution', portfolio.getPortfolioDistribution);
+module.exports = router;

@@ -78,14 +78,14 @@ class Stocks {
           errorMessages.STOCK_NOT_FOUND.errors
         );
       }
-      const stock = await stocks.findByIdAndUpdate(
+      const updatedStock = await stocks.findByIdAndUpdate(
         stockId,
         {
           $set: { stockName, stockTicker, quantity, buyPrice, dateOfBuy }
         },
         { new: true }
       );
-      return new APIResponse(200, stock);
+      return new APIResponse(200, updatedStock);
     } catch (error) {
       console.log(error);
       throw new ApiError(

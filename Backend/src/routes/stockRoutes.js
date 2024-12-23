@@ -6,4 +6,4 @@ router.get('/getAllStocksByUserId', stocks.getAllStocksByUserId);
 router.post('/editStockDetails/:stockId', stocks.editStockDetails);
 router.delete('/deleteStockDetails/:stockId', stocks.deleteStockDetails);
 router.get('/getRealTimeStockPrice/:stockTicker', stocks.getRealTimeStockPrice);
-module.exports = stocks;
+module.exports = router;

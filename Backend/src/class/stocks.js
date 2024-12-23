@@ -60,15 +60,7 @@ class Stocks {
     }
   }
   async editStockDetails(payload) {
-    const {
-      stockId,
-      userId,
-      stockName,
-      stockTicker,
-      quantity,
-      buyPrice,
-      dateOfBuy
-    } = payload;
+    const { stockId, userId, quantity } = payload;
     try {
       const findStock = await stocks.findOne({ _id: stockId, userId });
       if (!findStock) {
@@ -81,7 +73,7 @@ class Stocks {
       const updatedStock = await stocks.findByIdAndUpdate(
         stockId,
         {
-          $set: { stockName, stockTicker, quantity, buyPrice, dateOfBuy }
+          $set: { quantity }
         },
         { new: true }
       );

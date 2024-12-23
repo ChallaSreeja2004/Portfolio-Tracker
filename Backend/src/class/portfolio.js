@@ -12,11 +12,7 @@ class portfolio {
     try {
       const stocksList = await stocks.find({ userId });
       if (stocksList.length == 0) {
-        throw new ApiError(
-          errorMessages.NO_STOCKS_FOUND.statusCode,
-          errorMessages.NO_STOCKS_FOUND.message,
-          errorMessages.NO_STOCKS_FOUND.errors
-        );
+        return new APIResponse(200, 'No stocks found for the user');
       }
       let totalValue = 0;
       for (let stock in stocksList) {
@@ -39,12 +35,8 @@ class portfolio {
     const userId = payload;
     try {
       const stockList = await stocks.find({ userId });
-      if (stockListlength == 0) {
-        throw new ApiError(
-          errorMessages.NO_STOCKS_FOUND.statusCode,
-          errorMessages.NO_STOCKS_FOUND.message,
-          errorMessages.NO_STOCKS_FOUND.errors
-        );
+      if (stockList.length == 0) {
+        return new APIResponse(200, 'No stocks found for the user');
       }
       let topPerformingStock = null;
       for (let stock in stockList) {
@@ -75,11 +67,7 @@ class portfolio {
     try {
       const stocksList = await stocks.find({ userId });
       if (stocksList.length == 0) {
-        throw new ApiError(
-          errorMessages.NO_STOCKS_FOUND.statusCode,
-          errorMessages.NO_STOCKS_FOUND.message,
-          errorMessages.NO_STOCKS_FOUND.errors
-        );
+        return new APIResponse(200, 'No stocks found for the user');
       }
       let portfolioDistribution = {};
       for (let stock in stocksList) {

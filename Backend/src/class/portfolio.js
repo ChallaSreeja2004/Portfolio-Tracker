@@ -49,18 +49,55 @@ class portfolio {
       let topPerformingStock = null;
       for (let stock in stockList) {
         const price = await utils.getRealTimeStockPrice(stock.stockTicker);
-        if(price){
-          const stockPrice=price*stock.quantity;
-          if(!topPerformingStock||stockPrice>topPerformingStock.value){
-            topPerformingStock={
-              stockName:stock.stockName,
-              stockTicker:stock.stockTicker,
-              value:stockPrice
-            }
+        if (price) {
+          const stockPrice = price * stock.quantity;
+          if (!topPerformingStock || stockPrice > topPerformingStock.value) {
+            topPerformingStock = {
+              stockName: stock.stockName,
+              stockTicker: stock.stockTicker,
+              value: stockPrice
+            };
           }
         }
       }
       return new APIResponse(200, topPerformingStock);
+    } catch (error) {
+      console.log(error);
+      throw new ApiError(
+        errorMessages.INTERNAL_SERVER_ERROR.statusCode,
+        errorMessages.INTERNAL_SERVER_ERROR.message,
+        errorMessages.INTERNAL_SERVER_ERROR.errors
+      );
+    }
+  }
+  async getPortfolioDistribution(payload) {
+    const userId = payload;
+    try {
+      const stocksList = await stocks.find({ userId });
+      if (stocksList.length == 0) {
+        throw new ApiError(
+          errorMessages.NO_STOCKS_FOUND.statusCode,
+          errorMessages.NO_STOCKS_FOUND.message,
+          errorMessages.NO_STOCKS_FOUND.errors
+        );
+      }
+      let portfolioDistribution = {};
+      for (let stock in stocksList) {
+        const price = await utils.getRealTimeStockPrice(stock.stockTicker);
+        if (price) {
+          const stockPrice = price * stock.quantity;
+          if (!portfolioDistribution[stock.stockTicker]) {
+            portfolioDistribution[stock.stockTicker] = {
+              stockName: stock.stockName,
+              quantity: 0,
+              value: 0
+            };
+          }
+          portfolioDistribution[stock.stockTicker].quantity += stock.quantity;
+          portfolioDistribution[stock.stockTicker].value += stockValue;
+        }
+      }
+      return new APIResponse(200, portfolioDistribution);
     } catch (error) {
       console.log(error);
       throw new ApiError(

@@ -35,5 +35,40 @@ class portfolio {
       );
     }
   }
+  async getTopPerformingStock(payload) {
+    const userId = payload;
+    try {
+      const stockList = await stocks.find({ userId });
+      if (stockListlength == 0) {
+        throw new ApiError(
+          errorMessages.NO_STOCKS_FOUND.statusCode,
+          errorMessages.NO_STOCKS_FOUND.message,
+          errorMessages.NO_STOCKS_FOUND.errors
+        );
+      }
+      let topPerformingStock = null;
+      for (let stock in stockList) {
+        const price = await utils.getRealTimeStockPrice(stock.stockTicker);
+        if(price){
+          const stockPrice=price*stock.quantity;
+          if(!topPerformingStock||stockPrice>topPerformingStock.value){
+            topPerformingStock={
+              stockName:stock.stockName,
+              stockTicker:stock.stockTicker,
+              value:stockPrice
+            }
+          }
+        }
+      }
+      return new APIResponse(200, topPerformingStock);
+    } catch (error) {
+      console.log(error);
+      throw new ApiError(
+        errorMessages.INTERNAL_SERVER_ERROR.statusCode,
+        errorMessages.INTERNAL_SERVER_ERROR.message,
+        errorMessages.INTERNAL_SERVER_ERROR.errors
+      );
+    }
+  }
 }
 module.exports = portfolio;

@@ -1,5 +1,5 @@
 const mongoose = require('mongoose');
-const user = require('../models/user');
+const userModel = require('../models/user');
 const bcrypt = require('bcrypt');
 const ApiError = require('../utils/ApiError');
 const errorMessages = require('../config/errorMessage');
@@ -9,7 +9,7 @@ class User {
   async checkIfUserExist(payload) {
     const { email } = payload;
     try {
-      const existingUser = await user.findOne({ email });
+      const existingUser = await userModel.findOne({ email });
       if (existingUser) {
         const error = errorMessages.ALREADY_REGISTERED('User');
         throw new ApiError(error.statusCode, error.message.error.errors);
@@ -30,13 +30,13 @@ class User {
     try {
       await this.checkIfUserExist(email);
       const hashedPassword = await bcrypt.hash(password, salt);
-      const newUser = new user({
+      const newUser = new userModel({
         name,
         email,
         password: hashedPassword
       });
       const user = await newUser.save();
-      const result = await user.findById(user._id, '-password');
+      const result = await userModel.findById(user._id, '-password');
       const jwtPayload = {
         userId: newUser._id,
         name,
@@ -57,7 +57,7 @@ class User {
   async loginUser(payload) {
     const { email, password } = payload;
     try {
-      const user = await user.findOne({ email });
+      const user = await userModel.findOne({ email });
       if (!user) {
         throw new ApiError(
           errorMessages.USER_NOT_FOUND.statusCode,

@@ -44,7 +44,8 @@ app.use((req, res, next) => {
     decoded = jwt.verify(token, publicKey);
   }
   req.user = decoded;
-  const userId = decoded.userId;
+  const userId = decoded?.userId || 'anonymous';
+  req.body.id = userId;
   logger.info({
     timeStamp: new Date().toISOString(),
     userId: userId || 'anonymous',

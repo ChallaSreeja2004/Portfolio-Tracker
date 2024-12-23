@@ -6,11 +6,18 @@ const utils = new Utils();
 const errorMessages = require('../config/errorMessage');
 const { get } = require('mongoose');
 const storeStockDetails = (req, res, next) => {
-  const { stockName, stockTicker, quantity, buyPrice, dateOfBuy } = req.body;
-  const userId = req.user.userId;
-
+  const { id, userId, stockName, stockTicker, quantity, buyPrice, dateOfBuy } =
+    req.body;
+  if (id !== userId) {
+    throw new ApiError(
+      errorMessages.INVALID_ID.statusCode,
+      errorMessages.INVALID_ID.message,
+      errorMessages.INVALID_ID.errors
+    );
+  }
   try {
     handleMissingParameters(req.body, [
+      'userId',
       'stockName',
       'stockTicker',
       'quantity',
@@ -44,7 +51,14 @@ const storeStockDetails = (req, res, next) => {
     .catch((error) => next(error));
 };
 const getAllStocksByUserId = (req, res, next) => {
-  const userId = req.user.userId;
+  const { id, userId } = req.body;
+  if (id !== userId) {
+    throw new ApiError(
+      errorMessages.INVALID_ID.statusCode,
+      errorMessages.INVALID_ID.message,
+      errorMessages.INVALID_ID.errors
+    );
+  }
   if (!utils.isValidObjectId(userId)) {
     next(
       new ApiError(
@@ -63,16 +77,16 @@ const getAllStocksByUserId = (req, res, next) => {
 };
 const editStockDetails = (req, res, next) => {
   const { stockId } = req.params;
-  const { stockName, stockTicker, quantity, buyPrice, dateOfBuy } = req.body;
-  const userId = req.user.userId;
+  const { id, userId, quantity } = req.body;
+  if (id !== userId) {
+    throw new ApiError(
+      errorMessages.INVALID_ID.statusCode,
+      errorMessages.INVALID_ID.message,
+      errorMessages.INVALID_ID.errors
+    );
+  }
   try {
-    handleMissingParameters(req.body, [
-      'stockName',
-      'stockTicker',
-      'quantity',
-      'buyPrice',
-      'dateOfBuy'
-    ]);
+    handleMissingParameters(req.body, ['quantity']);
   } catch (error) {
     next(error);
   }
@@ -89,11 +103,7 @@ const editStockDetails = (req, res, next) => {
     .editStockDetails({
       stockId,
       userId,
-      stockName,
-      stockTicker,
-      quantity,
-      buyPrice,
-      dateOfBuy
+      quantity
     })
     .then((response) => {
       return res.status(200).json(response);
@@ -102,7 +112,14 @@ const editStockDetails = (req, res, next) => {
 };
 const deleteStockDetails = (req, res, next) => {
   const { stockId } = req.params;
-  const userId = req.user.userId;
+  const { id, userId } = req.body;
+  if (id !== userId) {
+    throw new ApiError(
+      errorMessages.INVALID_ID.statusCode,
+      errorMessages.INVALID_ID.message,
+      errorMessages.INVALID_ID.errors
+    );
+  }
   if (!utils.isValidObjectId(userId) || !utils.isValidObjectId(stockId)) {
     next(
       new ApiError(
@@ -114,24 +131,6 @@ const deleteStockDetails = (req, res, next) => {
   }
   stocks
     .deleteStockDetails({ stockId, userId })
-    .then((response) => {
-      return res.status(200).json(response);
-    })
-    .catch((error) => next(error));
-};
-const getPortfolioValue = (req, res, next) => {
-  const userId = req.user.userId;
-  if (!utils.isValidObjectId(userId)) {
-    next(
-      new ApiError(
-        errorMessages.INVALID_ID.statusCode,
-        errorMessages.INVALID_ID.message,
-        errorMessages.INVALID_ID.errors
-      )
-    );
-  }
-  stocks
-    .getPortfolioValue(userId)
     .then((response) => {
       return res.status(200).json(response);
     })

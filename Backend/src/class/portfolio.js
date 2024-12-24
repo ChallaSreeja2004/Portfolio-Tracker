@@ -15,7 +15,7 @@ class portfolio {
         return new APIResponse(200, 'No stocks found for the user');
       }
       let totalValue = 0;
-      for (let stock in stocksList) {
+      for (let stock of stocksList) {
         const price = await utils.getRealTimeStockPrice(stock.stockTicker);
         if (price) {
           totalValue += price * stock.quantity;
@@ -39,7 +39,8 @@ class portfolio {
         return new APIResponse(200, 'No stocks found for the user');
       }
       let topPerformingStock = null;
-      for (let stock in stockList) {
+      for (let stock of stockList) {
+        console.log(stock.stockTicker);
         const price = await utils.getRealTimeStockPrice(stock.stockTicker);
         if (price) {
           const stockPrice = price * stock.quantity;
@@ -70,7 +71,7 @@ class portfolio {
         return new APIResponse(200, 'No stocks found for the user');
       }
       let portfolioDistribution = {};
-      for (let stock in stocksList) {
+      for (let stock of stocksList) {
         const price = await utils.getRealTimeStockPrice(stock.stockTicker);
         if (price) {
           const stockPrice = price * stock.quantity;

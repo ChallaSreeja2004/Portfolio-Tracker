@@ -13,9 +13,11 @@
     "axios": "^1.7.9",
     "bcrypt": "^5.1.1",
     "express": "^4.21.2",
+    "https": "^1.0.0",
     "jsonwebtoken": "^9.0.2",
     "mongoose": "^8.9.2",
     "morgan": "^1.10.0",
+    "request": "^2.88.2",
     "winston": "^3.17.0"
   },
   "devDependencies": {

@@ -7,23 +7,27 @@ class Utils {
     return mongoose.Types.ObjectId.isValid(id);
   }
 
-  async getRealTimeStockPrice(stockTicker) {
+  async getRealTimeStockPrice(payload) {
+    const stockTicker = payload;
     const API_KEY = process.env.ALPHAVANTAGE_API_KEY;
-    const url = `https://www.alphavantage.co/query?function=TIME_SERIES_INTRADAY&symbol=${stockTicker}&interval=5min&apikey=${API_KEY}`;
+    const url = `https://www.alphavantage.co/query?function=TIME_SERIES_INTRADAY&symbol=${stockTicker}&interval=1min&apikey=${API_KEY}`;
     try {
       const response = await axios.get(url);
-      const latestData = response.data['Time Series(1min)'];
-      if (!latestData) {
-        console.error('Invalid data format or no data returned');
-        return null;
+
+      if (response.data && response.data['Time Series (5min)']) {
+        const timeSeries = response.data['Time Series (5min)'];
+        const latestTime = Object.keys(timeSeries)[0];
+        const latestData = timeSeries[latestTime];
+
+        return latestData['4. close'];
+      } else {
+        throw new Error('No stock data available for the ticker.');
       }
-      const latestPrice = latestData
-        ? latestData[Object.keys(latestData)[0]]['1. open']
-        : null;
-      return parseFloat(latestPrice);
     } catch (error) {
-      console.log('Error in fetching stock price', error);
+      console.error('Error fetching stock price:', error.message);
+      throw new Error('Unable to fetch real-time stock price.');
     }
   }
 }
+
 module.exports = Utils;

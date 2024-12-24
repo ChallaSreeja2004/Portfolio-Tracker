@@ -113,7 +113,7 @@ class Stocks {
   async getRealTimeStockPrice(payload) {
     const stockTicker = payload;
     try {
-      const price = utils.getRealTimeStockPrice(stockTicker);
+      const price = await utils.getRealTimeStockPrice(stockTicker);
       if (!price) {
         throw new ApiError(
           errorMessages.STOCK_PRICE_NOT_FOUND.statusCode,

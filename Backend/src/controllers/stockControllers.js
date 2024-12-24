@@ -8,13 +8,7 @@ const { get } = require('mongoose');
 const storeStockDetails = (req, res, next) => {
   const { id, userId, stockName, stockTicker, quantity, buyPrice, dateOfBuy } =
     req.body;
-  if (id !== userId) {
-    throw new ApiError(
-      errorMessages.INVALID_ID.statusCode,
-      errorMessages.INVALID_ID.message,
-      errorMessages.INVALID_ID.errors
-    );
-  }
+
   try {
     handleMissingParameters(req.body, [
       'userId',
@@ -28,6 +22,15 @@ const storeStockDetails = (req, res, next) => {
     next(error);
   }
   if (!utils.isValidObjectId(userId)) {
+    next(
+      new ApiError(
+        errorMessages.INVALID_ID.statusCode,
+        errorMessages.INVALID_ID.message,
+        errorMessages.INVALID_ID.errors
+      )
+    );
+  }
+  if (id !== userId) {
     next(
       new ApiError(
         errorMessages.INVALID_ID.statusCode,
@@ -52,14 +55,17 @@ const storeStockDetails = (req, res, next) => {
 };
 const getAllStocksByUserId = (req, res, next) => {
   const { id, userId } = req.body;
-  if (id !== userId) {
-    throw new ApiError(
-      errorMessages.INVALID_ID.statusCode,
-      errorMessages.INVALID_ID.message,
-      errorMessages.INVALID_ID.errors
+  handleMissingParameters(req.body, ['userId']);
+  if (!utils.isValidObjectId(userId)) {
+    next(
+      new ApiError(
+        errorMessages.INVALID_ID.statusCode,
+        errorMessages.INVALID_ID.message,
+        errorMessages.INVALID_ID.errors
+      )
     );
   }
-  if (!utils.isValidObjectId(userId)) {
+  if (id !== userId) {
     next(
       new ApiError(
         errorMessages.INVALID_ID.statusCode,
@@ -78,19 +84,21 @@ const getAllStocksByUserId = (req, res, next) => {
 const editStockDetails = (req, res, next) => {
   const { stockId } = req.params;
   const { id, userId, quantity } = req.body;
-  if (id !== userId) {
-    throw new ApiError(
-      errorMessages.INVALID_ID.statusCode,
-      errorMessages.INVALID_ID.message,
-      errorMessages.INVALID_ID.errors
-    );
-  }
   try {
-    handleMissingParameters(req.body, ['quantity']);
+    handleMissingParameters(req.body, ['userId', 'quantity']);
   } catch (error) {
     next(error);
   }
   if (!utils.isValidObjectId(userId) || !utils.isValidObjectId(stockId)) {
+    next(
+      new ApiError(
+        errorMessages.INVALID_ID.statusCode,
+        errorMessages.INVALID_ID.message,
+        errorMessages.INVALID_ID.errors
+      )
+    );
+  }
+  if (id !== userId) {
     next(
       new ApiError(
         errorMessages.INVALID_ID.statusCode,
@@ -113,14 +121,17 @@ const editStockDetails = (req, res, next) => {
 const deleteStockDetails = (req, res, next) => {
   const { stockId } = req.params;
   const { id, userId } = req.body;
-  if (id !== userId) {
-    throw new ApiError(
-      errorMessages.INVALID_ID.statusCode,
-      errorMessages.INVALID_ID.message,
-      errorMessages.INVALID_ID.errors
+  handleMissingParameters(req.body, ['userId']);
+  if (!utils.isValidObjectId(userId) || !utils.isValidObjectId(stockId)) {
+    next(
+      new ApiError(
+        errorMessages.INVALID_ID.statusCode,
+        errorMessages.INVALID_ID.message,
+        errorMessages.INVALID_ID.errors
+      )
     );
   }
-  if (!utils.isValidObjectId(userId) || !utils.isValidObjectId(stockId)) {
+  if (id !== userId) {
     next(
       new ApiError(
         errorMessages.INVALID_ID.statusCode,
@@ -137,7 +148,7 @@ const deleteStockDetails = (req, res, next) => {
     .catch((error) => next(error));
 };
 const getRealTimeStockPrice = (req, res, next) => {
-  const stockTicker = req.params;
+  const stockTicker = req.params.stockTicker;
   stocks
     .getRealTimeStockPrice(stockTicker)
     .then((response) => {

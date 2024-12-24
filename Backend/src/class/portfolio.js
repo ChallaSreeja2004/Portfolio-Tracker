@@ -83,7 +83,7 @@ class portfolio {
             };
           }
           portfolioDistribution[stock.stockTicker].quantity += stock.quantity;
-          portfolioDistribution[stock.stockTicker].value += stockValue;
+          portfolioDistribution[stock.stockTicker].value += stockPrice;
         }
       }
       return new APIResponse(200, portfolioDistribution);

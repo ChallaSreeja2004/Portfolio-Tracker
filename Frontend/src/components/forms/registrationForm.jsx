@@ -13,7 +13,6 @@ const RegistrationForm = () => {
   const handleTextChange = (e) => {
     setInputValue(e.target.value);
   };
-
   const handleEmailChange = (e) => {
     setEmail(e.target.value);
   };

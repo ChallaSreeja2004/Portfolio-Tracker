@@ -8,6 +8,7 @@ const Button = ({
   logoPosition = 'left',
   className = ''
 }) => {
+  const isIcon = React.isValidElement(logo);
   return (
     <button
       onClick={onClick}
@@ -20,11 +21,15 @@ const Button = ({
       } ${className}`}
     >
       {logo && logoPosition === "left" && (
-        <img src={logo} alt={`${text} logo`} className="w-6 h-6 " />
+        <span className="w-6 h-6 ">
+          {isIcon ? logo : <img src={logo} alt={`${text} logo`} className="w-6 h-6" />}
+        </span>
       )}
       <span>{text}</span>
       {logo && logoPosition === "right" && (
-        <img src={logo} alt={`${text} logo`} className="w-6 h-6 " />
+        <span className="w-6 h-6">
+          {isIcon ? logo : <img src={logo} alt={`${text} logo`} className="w-6 h-6" />}
+        </span>
       )}
     </button>
   );

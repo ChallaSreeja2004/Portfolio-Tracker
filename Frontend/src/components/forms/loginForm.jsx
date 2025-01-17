@@ -1,17 +1,19 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom'; 
+import { useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
+import axios from 'axios';
 import InputField from '../inputs/input';
 import Button from '../button/button';
 import Password from '../inputs/password';
 
 const LoginForm = () => {
-  const navigate = useNavigate(); 
+  const navigate = useNavigate();
 
-  const [inputValue, setInputValue] = useState('');
+  const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const handleTextChange = (e) => {
-    setInputValue(e.target.value);
+    setName(e.target.value);
   };
 
   const handleEmailChange = (e) => {
@@ -20,8 +22,24 @@ const LoginForm = () => {
   const handlePasswordChange = (e) => {
     setPassword(e.target.value);
   };
-  const handleLogin = () => {
+  const handleLogin = async (e) => {
+    e.preventDefault();
+    const userData = { name, email, password };
+    try {
+      const response = await axios.post('/api/v1/user/login', userData);
+      console.log(response.data);
+      alert(response.data.message);
+      if (response.data.token) {
+        alert('Login successful!');
+        localStorage.setItem('token', response.data.token); // Store token in localStorage
+      } else {
+        alert('No token found in the response.');
+      }
+    } catch (error) {
+      alert(error.response.data.message);
+    }
     alert(`Email: ${email}\nPassword: ${password}`);
+    navigate('/home');
   };
 
   return (
@@ -30,7 +48,7 @@ const LoginForm = () => {
       <div>
         <InputField
           placeholder="Username"
-          value={inputValue}
+          value={name}
           onChange={handleTextChange}
           type="text"
         />
@@ -57,9 +75,10 @@ const LoginForm = () => {
       </div>
       <h3 className=" text-center px-3 text-black mt-1">
         Not registered ?{' '}
-        <a href="/register" className="text-blue-600 hover:text-red-500">
+        <Link to="/register" className="text-blue-600 hover:text-red-500">
+          {' '}
           Register
-        </a>
+        </Link>
       </h3>
     </div>
   );
